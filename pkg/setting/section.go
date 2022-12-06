@@ -9,7 +9,7 @@ type ServerSettingS struct {
 	WriteTimeout time.Duration
 }
 
-type AppSetingS struct {
+type AppSettingS struct {
 	DefaultPageSize int
 	MaxPageSize     int
 	LogSavePath     string
@@ -26,7 +26,7 @@ type DatabaseSettingS struct {
 	TablePrefix string
 	Charset     string
 	PrseTime    bool
-	Port        int
+	Port        string
 }
 
 func (s *Setting) ReadSection(k string, v interface{}) error {

@@ -1,14 +1,20 @@
+// @title 部落格系統
+// @version 1.0
+// @description Golang webApplication練習
 package main
 
 import (
 	"blog-service/global"
+	"blog-service/internal/model"
 	"blog-service/internal/routers"
+	"blog-service/pkg/logger"
 	"blog-service/pkg/setting"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 func init() {
@@ -16,6 +22,16 @@ func init() {
 	if err != nil {
 		log.Fatalf("init.SetupSetting err: %v", err)
 	}
+	err = setupDBEngine()
+	if err != nil {
+		log.Fatalf("init.setupDBEngine err: %v", err)
+	}
+	err = setupLogger()
+	if err != nil {
+		log.Fatalf("init.setupLogger err: %v", err)
+	}
+
+	global.Logger.Infof("%s: go-programming-tour-book/%s", "eddycjy", "blog-service")
 }
 
 func main() {
@@ -44,12 +60,34 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
-	err = setting.ReadSection("Server", &global.ServerSetting)
+	err = setting.ReadSection("Database", &global.DatabaseSetting)
 	if err != nil {
 		return err
 	}
 
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+	return nil
+}
+
+func setupDBEngine() error {
+	var err error
+	global.DBEngine, err = model.NewDBEngine(global.DatabaseSetting)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setupLogger() error {
+	fileName := global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt
+	global.Logger = logger.NewLogger(&lumberjack.Logger{
+		Filename:  fileName,
+		MaxSize:   600,
+		MaxAge:    10,
+		LocalTime: true,
+	}, "", log.LstdFlags).WithCaller(2)
+
 	return nil
 }

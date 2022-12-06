@@ -18,18 +18,19 @@ type Model struct {
 	IsDel      bool   `json:"is_del"`
 }
 
-func NewDBEngine(dataseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-		dataseSetting.Host,
-		dataseSetting.Username,
-		dataseSetting.Password,
-		dataseSetting.DBName,
-		dataseSetting.Port,
+func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		databaseSetting.Host,
+		databaseSetting.Username,
+		databaseSetting.Password,
+		databaseSetting.DBName,
+		databaseSetting.Port,
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 	return db, nil
+	// return nil, nil
 
 }

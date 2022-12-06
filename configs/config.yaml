@@ -13,7 +13,7 @@ Database:
   DBType: postgres
   Username: postgres
   Password: 12345678
-  Host: 127.0.0.1:5431
+  Host: localhost
   DBName: blog_service
   TablePrefix: blog_
   Charset: utf8

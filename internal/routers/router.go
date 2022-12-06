@@ -4,12 +4,15 @@ import (
 	v1 "blog-service/internal/routers/api/v1"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	tag := v1.NewTag()
 	article := v1.NewArticle()
 	apiv1 := r.Group("/api/v1")
