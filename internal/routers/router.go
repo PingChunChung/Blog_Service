@@ -3,6 +3,8 @@ package routers
 import (
 	v1 "blog-service/internal/routers/api/v1"
 
+	_ "blog-service/docs"
+
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

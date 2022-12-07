@@ -4,3 +4,8 @@
 2022/12/05 12:19:39 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 26 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670213979246526000}
 2022/12/06 09:39:19 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 26 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670290759651675000}
 2022/12/06 09:41:01 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 38 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670290861654185800}
+2022/12/07 09:22:07 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670376127109615400}
+2022/12/07 16:34:50 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402090671467100}
+2022/12/07 16:37:16 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402236334620600}
+2022/12/07 16:43:26 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402606913406200}
+2022/12/07 16:49:02 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402942286587000}
