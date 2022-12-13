@@ -23,3 +23,7 @@ type UpdateTagRequest struct {
 type DeletedTagRequest struct {
 	ID uint32 `form:"id" binding:"required,gte=1"`
 }
+
+func (svc *Service) CountTag(param *CountTagRequest) (int, error) {
+	return svc.dao.CountTag()
+}

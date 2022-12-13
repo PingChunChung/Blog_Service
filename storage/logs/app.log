@@ -9,3 +9,7 @@
 2022/12/07 16:37:16 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402236334620600}
 2022/12/07 16:43:26 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402606913406200}
 2022/12/07 16:49:02 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670402942286587000}
+2022/12/11 20:37:32 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670762252580338400}
+2022/12/11 20:38:21 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"error","message":"app.BindAndValid errs: [State必须是[01]中的一个]","time":1670762301949734100}
+2022/12/11 20:41:10 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"info","message":"eddycjy: go-programming-tour-book/blog-service","time":1670762470016368800}
+2022/12/11 20:41:16 {"callers":["C:/Users/jack_chung/Code/Golang/blog-service/main.go: 29 main.init.0"],"level":"error","message":"app.BindAndValid errs: [State必須是[01]中的一個]","time":1670762476352252500}

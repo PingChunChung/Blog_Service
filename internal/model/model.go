@@ -3,10 +3,13 @@ package model
 import (
 	"blog-service/pkg/setting"
 	"fmt"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+type Register struct{}
 
 type Model struct {
 	ID         uint32 `gorm:"primary_key" json:"id"`
@@ -30,7 +33,30 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return db, nil
 	// return nil, nil
 
+}
+
+func (r *Register) Name() string {
+	return "Register"
+}
+
+func (r *Register) Initialize(db *gorm.DB) error {
+	db.Callback().Create().Before("gorm:create").Register("updateTimeStampForCreateCallback", updateTimeStampForCreateCallback)
+
+	return nil
+}
+
+func updateTimeStampForCreateCallback(tx *gorm.DB) {
+	ctx := tx.Statement.Context
+	timeFieldsToInit := []string{"CreatedOn", "ModifiedOn"}
+	for _, field := range timeFieldsToInit {
+		if timeField := tx.Statement.Schema.LookUpField(field); timeField != nil {
+			fmt.Println(field, timeField)
+			timeField.Set(ctx, tx.Statement.ReflectValue, time.Now())
+		}
+
+	}
 }
