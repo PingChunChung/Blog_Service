@@ -2,10 +2,12 @@ package v1
 
 import (
 	"blog-service/global"
+	"blog-service/internal/service"
 	"blog-service/pkg/app"
 	"blog-service/pkg/errcode"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-delve/delve/service"
 )
 
 type Tag struct{}
@@ -36,11 +38,7 @@ func (t Tag) Create(c *gin.Context) {}
 // @Failure 500 {object} errcode.Error "內部錯誤"
 // @Router /api/v1/tags [get]
 func (t Tag) List(c *gin.Context) {
-	param := struct {
-		Name  string `form:"name" binding:"max=100"`
-		State uint8  `form:"state,default=1" binding:"oneof=01"`
-	}{}
-
+	param := service.TagListRequest{}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
 	if !valid {
@@ -49,6 +47,9 @@ func (t Tag) List(c *gin.Context) {
 		response.ToErrorResponse(errRsp)
 		return
 	}
+
+	svc := service.New(c.Request.Context())
+	pager := app.Pager{Page: app.GetPage()}
 	response.ToResponse(gin.H{})
 	return
 }
