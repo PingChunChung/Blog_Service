@@ -14,7 +14,7 @@ type Register struct{}
 type Model struct {
 	ID         uint32 `gorm:"primary_key" json:"id"`
 	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"Modified_by"`
+	ModifiedBy string `json:"modified_by"`
 	CreatedOn  uint32 `json:"created_on"`
 	ModifiedOn uint32 `json:"modified_on"`
 	DeletedOn  uint32 `json:"deleted_on"`
@@ -29,11 +29,14 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 		databaseSetting.DBName,
 		databaseSetting.Port,
 	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: false,
+	})
 	if err != nil {
 		return nil, err
 	}
-
+	db.AutoMigrate(&Tag{})
+	db.AutoMigrate(&Article{})
 	return db, nil
 	// return nil, nil
 
