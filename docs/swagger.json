@@ -259,7 +259,7 @@
                     "type": "integer"
                 },
                 "is_del": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "modified_on": {
                     "type": "integer"
@@ -268,7 +268,7 @@
                     "type": "string"
                 },
                 "state": {
-                    "type": "boolean"
+                    "type": "integer"
                 }
             }
         }

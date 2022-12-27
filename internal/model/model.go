@@ -7,9 +7,9 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"gorm.io/gorm/logger"
 )
-
-type Register struct{}
 
 type Model struct {
 	ID         uint32 `gorm:"primary_key" json:"id"`
@@ -18,7 +18,7 @@ type Model struct {
 	CreatedOn  uint32 `json:"created_on"`
 	ModifiedOn uint32 `json:"modified_on"`
 	DeletedOn  uint32 `json:"deleted_on"`
-	IsDel      bool   `json:"is_del"`
+	IsDel      uint8  `json:"is_del"`
 }
 
 func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
@@ -30,36 +30,79 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 		databaseSetting.Port,
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		DisableForeignKeyConstraintWhenMigrating: false,
+		// DisableForeignKeyConstraintWhenMigrating: false,
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		return nil, err
 	}
 	db.AutoMigrate(&Tag{})
 	db.AutoMigrate(&Article{})
+	Initialize(db)
 	return db, nil
 	// return nil, nil
 
 }
 
-func (r *Register) Name() string {
-	return "Register"
-}
-
-func (r *Register) Initialize(db *gorm.DB) error {
-	db.Callback().Create().Before("gorm:create").Register("updateTimeStampForCreateCallback", updateTimeStampForCreateCallback)
-
+func Initialize(db *gorm.DB) error {
+	db.Callback().Create().Replace("gorm:before_create", updateTimeStampForCreateCallback)
+	db.Callback().Update().Replace("gorm:before_update", updateTimeStampForBeforeUpdateCallback)
+	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 	return nil
 }
 
-func updateTimeStampForCreateCallback(tx *gorm.DB) {
-	ctx := tx.Statement.Context
-	timeFieldsToInit := []string{"CreatedOn", "ModifiedOn"}
-	for _, field := range timeFieldsToInit {
-		if timeField := tx.Statement.Schema.LookUpField(field); timeField != nil {
-			fmt.Println(field, timeField)
-			timeField.Set(ctx, tx.Statement.ReflectValue, time.Now())
-		}
+func updateTimeStampForCreateCallback(db *gorm.DB) {
+	db.Statement.SetColumn("CreatedOn", time.Now())
+}
 
+func updateTimeStampForBeforeUpdateCallback(db *gorm.DB) {
+	db.Statement.SetColumn("ModifiedOn", time.Now().Unix())
+}
+
+func deleteCallback(db *gorm.DB) {
+	if db.Error == nil {
+		if db.Statement.Schema != nil {
+			db.Statement.SQL.Grow(100)
+
+			deleteField := db.Statement.Schema.LookUpField("DeletedOn")
+			isDelField := db.Statement.Schema.LookUpField("IsDel")
+			if !db.Statement.Unscoped && deleteField != nil && isDelField != nil {
+				if db.Statement.SQL.String() == "" {
+					now := time.Now().Unix()
+					db.Statement.AddClause(
+						clause.Set{{
+							Column: clause.Column{Name: deleteField.DBName},
+							Value:  now,
+						},
+							{Column: clause.Column{Name: isDelField.DBName},
+								Value: 1}},
+					)
+					db.Statement.AddClauseIfNotExists(clause.Update{})
+					db.Statement.Build("UPDATE", "SET", "WHERE")
+				} else {
+					if db.Statement.SQL.String() == "" {
+						db.Statement.AddClauseIfNotExists(clause.Delete{})
+						db.Statement.AddClauseIfNotExists(clause.From{})
+						db.Statement.Build("DELETE", "FROM", "WHERE")
+					}
+				}
+				fmt.Println(db.Statement.SQL.String())
+				fmt.Println(db.Statement.Vars)
+
+				if _, ok := db.Statement.Clauses["WHERE"]; !db.AllowGlobalUpdate && !ok {
+					db.AddError(gorm.ErrMissingWhereClause)
+					return
+				}
+
+				if !db.DryRun && db.Error == nil {
+					result, err := db.Statement.ConnPool.ExecContext(db.Statement.Context, db.Statement.SQL.String(), db.Statement.Vars...)
+					if err == nil {
+						db.RowsAffected, _ = result.RowsAffected()
+					} else {
+						db.AddError(err)
+					}
+				}
+			}
+		}
 	}
 }

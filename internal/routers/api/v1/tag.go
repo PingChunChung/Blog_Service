@@ -4,6 +4,7 @@ import (
 	"blog-service/global"
 	"blog-service/internal/service"
 	"blog-service/pkg/app"
+	"blog-service/pkg/convert"
 	"blog-service/pkg/errcode"
 
 	"github.com/gin-gonic/gin"
@@ -98,7 +99,9 @@ func (t Tag) Get(c *gin.Context) {}
 // @Failure 500 {object} errcode.Error "內部錯誤"
 // @Router /api/v1/tags/{id} [put]
 func (t Tag) Update(c *gin.Context) {
-	param := service.UpdateTagRequest{}
+	param := service.UpdateTagRequest{
+		ID: convert.StrTo(c.Param("id")).MustUInt32(),
+	}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
 	if !valid {
@@ -127,7 +130,9 @@ func (t Tag) Update(c *gin.Context) {
 // @Failure 500 {object} errcode.Error "內部錯誤"
 // @Router /api/v1/tags/{id} [delete]
 func (t Tag) Delete(c *gin.Context) {
-	param := service.DeleteTagRequest{}
+	param := service.DeleteTagRequest{
+		ID: convert.StrTo(c.Param("id")).MustUInt32(),
+	}
 	response := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &param)
 	if !valid {

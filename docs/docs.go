@@ -268,7 +268,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "is_del": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "modified_on": {
                     "type": "integer"
@@ -277,7 +277,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "state": {
-                    "type": "boolean"
+                    "type": "integer"
                 }
             }
         }

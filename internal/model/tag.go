@@ -18,7 +18,7 @@ func (t Tag) Count(db *gorm.DB) (int, error) {
 		db = db.Where("name = ?", t.Name)
 	}
 	db = db.Where("state = ?", t.State)
-	err := db.Model(&t).Where("is_del = ?", false).Count(&count).Error
+	err := db.Model(&t).Where("is_del = ?", 0).Count(&count).Error
 	if err != nil {
 		return 0, err
 	}
@@ -38,7 +38,7 @@ func (t Tag) List(db *gorm.DB, pageOffset, pageSize int) ([]*Tag, error) {
 	}
 
 	db = db.Where("state = ?", t.State)
-	if err = db.Where("is_del = ?", false).Find(&tags).Error; err != nil {
+	if err = db.Where("is_del = ?", 0).Find(&tags).Error; err != nil {
 		return nil, err
 	}
 
@@ -49,11 +49,14 @@ func (t Tag) Create(db *gorm.DB) error {
 	return db.Create(&t).Error
 }
 
-func (t Tag) Update(db *gorm.DB) error {
-	db = db.Model(&Tag{}).Where("id = ? AND is_del = ?", t.ID, false)
-	return db.Updates(t).Error
+func (t Tag) Update(db *gorm.DB, values interface{}) error {
+	err := db.Model(&t).Where("id = ?", t.Model.ID).Updates(values).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t Tag) Delete(db *gorm.DB) error {
-	return db.Where("id = ? AND is_del = ?", t.Model.ID, false).Delete(&t).Error
+	return db.Where("id = ? AND is_del = ?", t.Model.ID, 0).Delete(&t).Error
 }
