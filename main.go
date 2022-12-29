@@ -9,6 +9,7 @@ import (
 	"blog-service/internal/routers"
 	"blog-service/pkg/logger"
 	"blog-service/pkg/setting"
+	"blog-service/pkg/tracer"
 	"log"
 	"net/http"
 	"time"
@@ -29,6 +30,11 @@ func init() {
 	err = setupLogger()
 	if err != nil {
 		log.Fatalf("init.setupLogger err: %v", err)
+	}
+
+	err = setupTracer()
+	if err != nil {
+		log.Fatalf("init.setupTracer err: %v", err)
 	}
 
 	global.Logger.Infof("%s: go-programming-tour-book/%s", "eddycjy", "blog-service")
@@ -98,5 +104,19 @@ func setupLogger() error {
 		LocalTime: true,
 	}, "", log.LstdFlags).WithCaller(2)
 
+	return nil
+}
+
+func setupTracer() error {
+	jaegeTracer, _, err := tracer.NewJagerTracer(
+		"blog-service",
+		"127.0.0.1:6831",
+	)
+
+	if err != nil {
+		return err
+	}
+
+	global.Tracer = jaegeTracer
 	return nil
 }
