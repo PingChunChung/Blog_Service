@@ -37,7 +37,7 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 		return nil, err
 	}
 	db.AutoMigrate(&Tag{})
-	db.AutoMigrate(&Article{})
+	db.AutoMigrate(&Article{}, &Auth{})
 	Initialize(db)
 	return db, nil
 	// return nil, nil

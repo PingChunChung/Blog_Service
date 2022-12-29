@@ -28,3 +28,8 @@ Database:
   Charset: utf8
   PrseTime: True
   Port: 5431
+
+JWT:
+  Secret: Jack
+  Issuer: blog_service
+  Expire: 7200

@@ -18,13 +18,18 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.Translations())
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	tag := v1.NewTag()
-	article := v1.NewArticle()
+	r.POST("/auth", api.GetAuth)
+
 	upload := api.NewUpload()
 	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
 	r.POST("/upload/file", upload.UploadFile)
+
+	tag := v1.NewTag()
+	article := v1.NewArticle()
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(middleware.JWT())
 	{
 		apiv1.POST("/tags", tag.Create)
 		apiv1.GET("/tags", tag.List)
