@@ -17,6 +17,7 @@ App:
     - .jpg
     - .jpeg
     - .png
+  DefaultContextTimeout: 60
 
 Database:
   DBType: postgres
@@ -33,3 +34,13 @@ JWT:
   Secret: Jack
   Issuer: blog_service
   Expire: 7200
+
+Email:
+  Host: smtp.google.com
+  Port: 465
+  UserName: xxxxxx@gmail.com
+  Password: xxxx
+  IsSSL: True
+  From: xxxxxxxx@gmail.com
+  To:
+    - xxxxxxxx@yahoo.com.tw
