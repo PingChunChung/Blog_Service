@@ -25,7 +25,7 @@ func Recovery() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				s := "panic recover err: %v"
-				global.Logger.WithCallersFrames().Errorf(s, err)
+				global.Logger.WithCallersFrames().Errorf(c, s, err)
 
 				err := defaultMailer.SendMail(
 					global.EmailSetting.To,
@@ -33,7 +33,7 @@ func Recovery() gin.HandlerFunc {
 					fmt.Sprintf("錯誤訊息: %v", err),
 				)
 				if err != nil {
-					global.Logger.Panicf("mail.SendMail err: %v", err)
+					global.Logger.Panicf(c, "mail.SendMail err: %v", err)
 				}
 
 				app.NewResponse(c).ToErrorResponse(errcode.ServerError)

@@ -10,16 +10,28 @@ import (
 	"blog-service/pkg/logger"
 	"blog-service/pkg/setting"
 	"blog-service/pkg/tracer"
+	"flag"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	port    string
+	runMode string
+	config  string
+)
+
 func init() {
-	err := setupSetting()
+	err := setupFlag()
+	if err != nil {
+		log.Fatalf("init.SetupFlag err: %v", err)
+	}
+	err = setupSetting()
 	if err != nil {
 		log.Fatalf("init.SetupSetting err: %v", err)
 	}
@@ -37,7 +49,6 @@ func init() {
 		log.Fatalf("init.setupTracer err: %v", err)
 	}
 
-	global.Logger.Infof("%s: go-programming-tour-book/%s", "eddycjy", "blog-service")
 }
 
 func main() {
@@ -54,7 +65,7 @@ func main() {
 }
 
 func setupSetting() error {
-	setting, err := setting.NewSetting()
+	setting, err := setting.NewSetting(strings.Split(config, ",")...)
 	if err != nil {
 		return err
 	}
@@ -82,6 +93,13 @@ func setupSetting() error {
 	global.JWTSetting.Expire *= time.Second
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+
+	if port != "" {
+		global.ServerSetting.HttpPort = port
+	}
+	if runMode != "" {
+		global.ServerSetting.RunMode = runMode
+	}
 	return nil
 }
 
@@ -99,7 +117,7 @@ func setupLogger() error {
 	fileName := global.AppSetting.LogSavePath + "/" + global.AppSetting.LogFileName + global.AppSetting.LogFileExt
 	global.Logger = logger.NewLogger(&lumberjack.Logger{
 		Filename:  fileName,
-		MaxSize:   600,
+		MaxSize:   500,
 		MaxAge:    10,
 		LocalTime: true,
 	}, "", log.LstdFlags).WithCaller(2)
@@ -108,15 +126,24 @@ func setupLogger() error {
 }
 
 func setupTracer() error {
-	jaegeTracer, _, err := tracer.NewJagerTracer(
+	jaegerTracer, _, err := tracer.NewJagerTracer(
 		"blog-service",
-		"127.0.0.1:6831",
+		"localhost:6831",
 	)
 
 	if err != nil {
 		return err
 	}
 
-	global.Tracer = jaegeTracer
+	global.Tracer = jaegerTracer
+	return nil
+}
+
+func setupFlag() error {
+	flag.StringVar(&port, "port", "", "啟動通訊埠")
+	flag.StringVar(&runMode, "mode", "", "啟動模式")
+	flag.StringVar(&config, "config", "configs/", "指定要使用的設定檔路徑")
+	flag.Parse()
+
 	return nil
 }
